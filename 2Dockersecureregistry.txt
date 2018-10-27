@@ -1,0 +1,39 @@
+Registry Server
+---------------
+
+mkdir -p /root/registry-certs
+mkdir -p /root/docker-resgistry
+
+openssl req -newkey rsa:4096 -nodes -sha256 -keyout /root/registry-certs/domain.key -x509 -days 365 -out /root/registry-certs/domain.crt
+vi /root/docker-registry/docker-compose.yml
+
+Docker-composefile
+------------------ 
+restart: always
+  image: registry:2
+  ports:
+    - 5000:5000
+  environment:
+    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+    REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+  volumes:
+    - /root/registry-certs:/certs
+
+
+Client - copy domain.crt to 
+
+
+
+
+
+
+ docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2
+
+ docker run -d --restart=always \
+ --name=registry \
+ -v /root/registrycerts:/certs/ \
+ -v /mnt/registry:/var/lib/registry \
+ -e REGISTRY_HTTP_ADDR=0.0.0.0:443 \
+ -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
+ -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+ -p 443:443 registry:2
