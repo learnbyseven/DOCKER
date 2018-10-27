@@ -1,0 +1,11 @@
+service docker stop 
+ip link set docker0 down
+brctl delbr docker0
+brctl addbr edureka
+ip link set edureka up 
+ip addr add 10.0.0.1/24 dev edureka 
+iptables -t nat -A POSTROUTING -s 10.0.0.1/24 -j MASQUERADE
+
+echo 'DOCKER_OPTS="-b=edureka"' >> /etc/default/docker
+service docker restart 
+iptables -t nat -L

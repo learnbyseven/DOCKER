@@ -1,0 +1,3 @@
+docker run -d --name=edurekanginx -P nginx:latest 
+elink http://locahost:
+docker port containerid

@@ -1,0 +1,38 @@
+GRE
+----
+Server1
+--------
+tun2=10.0.201.1 
+Subnet= 172.16.0.0/16 
+Bride=docker0 Custom
+
+Create custom bridge (Following above method network subnet 172.16.0.0/16, gateway or bridge IP 172.16.0.1/16) & Make it as a default bridge using (echo 'Docker_OPTS="-b=<bridge_name>"' >> /etc/default/docker)
+#iptunnel add tun2 mode gre remote <remoteserver_ip> local <localserver_ip>
+#ifconfig tun2 up
+#ip addr add 10.0.201.1 dev tun2
+#ip route add 172.17.0.0/16 dev tun2
+#iptables -t nat -F POSTROUTING
+#iptables -t nat -A POSTROUTING -s 172.16.0.0/16 ! -d 172.17.0.0/16 -j MASQUERADE
+spin container1 , verify it has 172.16.x.x ip, install netcat-traditional package
+#docker attach to container1
+#nc -lp 1234 
+
+Server2
+-------
+
+tun2=10.0.202.1 
+Subnet= 172.17.0.0/16 
+Bride=docker0 Custom
+
+
+Create custom bridge (Following above method network subnet 172.17.0.0/16, gateway or bridge IP 172.17.1.1) & Make it as a default bridge using (echo 'Docker_OPTS="-b=<bridge_name>"' >> /etc/default/docker)
+#iptunnel add tun2 mode gre remote <remoteserver_ip> local <localserver_ip>
+#ifconfig tun2 up
+#ip addr add 10.0.202.1 dev tun2
+#ip route add 172.16.0.0/16 dev tun2
+#iptables -t nat -F POSTROUTING
+#iptables -t nat -A POSTROUTING -s 172.17.0.0/16 ! -d 172.16.0.0/16 -j MASQUERADE
+spin container2 , verify it has 172.17.x.x ip, install netcat-traditional package
+#docker attach to container1
+#nc -w 1 -v <container1IP running on server1> 1234
+

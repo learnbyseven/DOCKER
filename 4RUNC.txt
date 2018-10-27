@@ -1,0 +1,8 @@
+mkdir -p /tmp/myapp/rootfs
+docker export c99 | tar xvfC - /tmp/myapp/rootfs
+runc spec
+runc run test / runc create test
+
+docker export c99 | tar xvfC - /tmp/myapp/rootfs
+
+docker export 58a | tar xvfC - /tmp/myapp/rootfs 

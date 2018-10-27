@@ -1,0 +1,41 @@
+$ pip install awscli --upgrade --user
+
+
+AWS
+-----
+First configure aws authentication
+
+Access Key ID:AKIAI6VZUXTAV54NQNTA
+Secret Access Key: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
+US West (Oregon) us-west-2
+Ubuntu Machine image ID 
+-----------------------
+ami-efd0428f (ubuntu)
+
+Commands
+---------
+#aws iam list-access-keys
+#aws ec2 create-key-pair --key-name giri
+#aws ec2 describe-key-pairs
+#aws ec2 run-instances --image-id ami-efd0428f --count 1 --instance-type t2.micro --key-name giri
+#aws ec2 describe-instances 
+#ssh -i giri.pem ec2@54.201.176.204
+
+#ssh -i "giri.pem" ubuntu@54.202.125.58
+
+
+
+AWS-Dockermachine 
+-----------------
+
+#curl -L https://github.com/docker/machine/releases/download/v0.4.0/docker-machine_linux-amd64 > /usr/local/bin/docker-machine
+#chmod +x /usr/local/bin/docker-machine
+#docker-machine create -d amazonec2 --amazonec2-access-key= --amazonec2-secret-key= --amazonec2-vpc-id= --amazonec2-region=us-west-2 sevendockermachine
+#eval "$(docker-machine env edureka") ps 
+#docker-machine ls
+#eval $(docker-machine env -u)
+
+EC2 containers
+---------------
+
+https://aws.amazon.com/free/#legal 

@@ -1,0 +1,16 @@
+docker run -d --name redis1 redis 
+docker run -it --link redis1:redis --name redisclient1 busybox 
+
+Client1
+--------
+docker run -it --link redis1:redis --name client1 redis sh
+redis-cli -h redis
+set myvar DOCKER
+get myvar 
+
+CLIENT2
+-------
+
+docker run -it --link redis1:redis --name client2 redis sh
+redis-cli -h redis
+get myvar

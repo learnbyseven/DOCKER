@@ -1,0 +1,11 @@
+FindingIP
+-------
+#docker inspect --format '{{ .NetworkSettings.IPAddress }}' <containername>
+#docker exec -it <containername> ip addr | grep global
+#pid=$(docker inspect --format {{.State.Pid}} 3ef)
+#echo DOCKER_OPTS=\" --iptables=false --ip-forward=false\" >> /etc/default/docker
+#iptables -t nat -D POSTROUTING 1 
+
+
+ nsenter --target $PID --mount --uts --ipc --net --pid
+ 

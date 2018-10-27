@@ -1,0 +1,107 @@
+COMPOSE
+--------
+LINUX
+
+#apt-get install python-pip
+#pip install --upgrade pip
+#pip install docker-compose
+#mkdir wordpress
+#cd wordpress/
+#touch docker-compose.yml
+#docker-compose up -d 
+wordpress:
+    image: wordpress
+    links:
+      - wordpress_db:mysql
+    ports:
+      - "8080:80"
+
+wordpress_db:
+ image: mariadb
+ environment:
+  MYSQL_ROOT_PASSWORD: edureka
+  
+phpmyadmin:
+  image: corbinu/docker-phpmyadmin
+  links:
+    - workpress_db:mysql
+  ports: 
+    - 8181:80
+
+  environment:
+    MYSQL_USERNAME: root
+    MYSQL_ROOT_PASSWORD: edureka
+
+
+
+DOCKER-MACHINE ON LINUX
+------------------------
+
+https://docs.docker.com/machine/install-machine/#installing-machine-directly
+
+prerequiste
+curl & Virtual BOX
+
+#apt-get install curl 
+#curl -O http://download.virtualbox.org/virtualbox/5.1.22/virtualbox-5.1_5.1.22-115126~Ubuntu~xenial_amd64.deb
+#apt-get -f install
+#dpkg -i virtualbox-5.1_5.1.22-115126~Ubuntu~xenial_amd64.deb
+"Package Error"
+Re-run 
+#apt-get -f install
+#curl -L https://github.com/docker/machine/releases/download/v0.10.0/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine
+#chmod +x /tmp/docker-machine
+#cp /tmp/docker-machine /usr/local/bin/docker-machine 
+
+--Error with pre-create check: "This computer doesn't have VT-X/AMD-v enabled. Enabling it in the BIOS is mandatory---
+Enable VT
+
+#docker-machine create --driver virtualbox manager
+#docker-machine env manager 
+#eval $(docker-machine env manager)
+#env | grep DOCKER
+#docker run -d -p 8000:80 nginx
+#eval $(docker-machine env -u) --For unset
+
+
+Additiona :
+docker-machine ip machinename
+docker-machine ls
+
+
+docker-machine create -d --virtualbox-cpu-count "1" --virtualbox-disk-size "4000" --virtualbox-memory "1024" virtualbox swarmmanager
+
+
+
+SWARM
+-------
+
+docker-machine create --driver virtualbox swarmmanager
+docker-machine create --driver virtualbox swarmnode1
+docker-machine create --driver virtualbox node2
+
+
+Additional:
+
+docker node ls (list)
+docker node inspect <NODE-ID> (inspect)
+docker swarm leave
+docker node rm "nodename"
+docker swarm init --advertise-addr  192.168.124.140
+docker swarm join --token SWMTKN-1-1tq163zsm3tn6gdztl72rcyeotwd44y9xzubjylyskcu3wj7ur-0d9058nxzypawhbkfu55okhtb 192.168.124.140:2377
+
+
+PY
+----
+from docker import client
+c=Client(base_url="tcp://192.168.124.139:2375")
+c.containers()
+
+PID=$(docker inspect --format {{.state.Pid}} 61cb9a584f48)
+nsenter --target $PID --mount --utls --ipc --net --pid 
+docker-enter <> ls -la
+
+
+UIDOCKER
+---------
+docker run -d -p 9000:9000 --privileged -v /var/run/docker.sock:/var/run/docker.sock uifd/ui-for-docker

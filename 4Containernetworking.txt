@@ -1,0 +1,15 @@
+service docker stop
+echo DOKCER_OPTS=\"--iptables=false --ip-forward=false\" >> /etc/default/docker
+service docker start 
+
+iptables -t nat -D POSTROUTING 1 
+echo 0 > /proc/sys/net/ipv4/ip_forward 
+
+service docker restart 
+
+docker run -it --rm ubuntu
+
+RE-ENABLE
+---------
+echo 1 > /proc/sys/net/ipv4/ip_forward  
+iptables -t nat -A POSTROUTING -s 172.17.0.0/16 -j MASQUERADE 

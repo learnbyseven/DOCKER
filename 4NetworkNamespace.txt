@@ -1,0 +1,25 @@
+NSENTER :
+
+docker run -v /usr/local/bin:/target jpetazzo/nsenter
+
+docker inspect --format '{{.State.Pid}}' "9a"
+
+
+
+docker run -it --network=none --name=none --hostname=none ubuntu
+
+docker run -it --network=host --name=host --hostname=host ubuntu
+
+docker run -itd --name=box --network=bridge --name=bridge --hostname=bridge busybox 
+
+docker run -itd --name=box busybox 
+
+pid=$(docker inspect --format '{{.State.Pid}}' "box")
+echo $pid
+
+mkdir -p /var/run/netns
+ln -s /proc/$pid/ns/net /var/run/netns/box 
+
+cd /var/run
+ip netns
+ip netns exec box ip a 

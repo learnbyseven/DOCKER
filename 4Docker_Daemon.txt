@@ -1,0 +1,64 @@
+CERTS CREATION URL: https://docs.docker.com/engine/security/https/ 
+docker pull runseb/dockertls
+
+
+docker run -it -v $(pwd):/tmp/ca runseb/dockertls serverx.192.168.124.128.nip.io
+
+Secure Deamon
+--------------
+--------------
+#mkdir -p /var/docker
+#dockerd -D --tlscert /var/docker/server-cert.pem --tlskey /var/docker/server-key.pem -H tcp://192.168.124.137:2376
+#vi /etc/docker/daemon.json
+{
+        "debug": true,
+        "tls": true,
+        "tlscert": "/var/docker/server.pem",
+        "tlskey": "/var/docker/serverkey.pem",
+        "hosts": ["tcp://192.168.124.137:2376"]
+}
+#:wq!
+
+#vi /lib/systemd/system/docker.service
+#systemctl reload daemon 
+
+curl https://192.168.124.137:2376/images/json --cert /root/certs/server-cert.pem --key /root/certs/server-key.pem --cacert /root/certs/ca.pem
+dockerd --tlsverify --tlscacert=ca.pem --tlscert=servercert.pem --tlskey=serverkey.pem -H=192.168.124.128:2376
+
+docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem -H=192.168.124.128:2376 version
+
+
+
+#docker -H unix:///var/run/docker.sock info
+#docker -H /var/run/docker.sock info 
+#dockerd -H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock
+#docker -H tcp://127.0.0.1:2375 pull ubuntu 
+
+
+
+CERTS GENERATION:
+-----------------
+
+
+#docker pull runseb/dockertls
+#docker run -ti -v $(pwd):/tmp/ca runseb/dockertls serverx.giriaddns.net
+#service docker stop
+#mkdir /etc/docker
+#mkdir ~/.docker
+#cp {ca,servercert,serverkey}.pem /etc/docker 
+#cp ca.pem ~/.docker/
+#cp clientkey.pem ~/.docker/key.pem
+#cp clientcert.pem ~/.docker/cert.pem 
+
+#vi /etc/default/docker
+DOCKER_OPTS="-H tcp://serverx.giriaddns.net:2376 --tlsverify --tlscacert=/etc/docker/ca.pem --tlscert=/etc/docker/servercert.pem --tlskey=/etc/docker/serverkey.pem"
+
+
+
+dockerd --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem -H=trainingserver222.giriaddns.net:2376
+docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem -H=192.168.124.142:2376 version
+
+
+
+
+docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem -H=192.168.124.142:2376 version
