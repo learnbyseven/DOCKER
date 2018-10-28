@@ -1,4 +1,5 @@
+apt install docker-runc
 mkdir -p /tmp/myapp/rootfs
 docker export c99 | tar xvfC - /tmp/myapp/rootfs
-runc spec
-runc run test / runc create test
+docker-runc spec
+docker-runc run test
