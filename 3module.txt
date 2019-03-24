@@ -105,3 +105,19 @@ docker-enter <> ls -la
 UIDOCKER
 ---------
 docker run -d -p 9000:9000 --privileged -v /var/run/docker.sock:/var/run/docker.sock uifd/ui-for-docker
+
+
+
+
+
+DOCKER-COMPOSE LINUX 
+--------------------
+Step1 Download
+--------------
+sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+Permission 
+----------
+sudo chmod +x /usr/local/bin/docker-compose
+Soft Linking
+------------
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
