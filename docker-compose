@@ -1,0 +1,25 @@
+# 3 tier application
+#Tier - 1 
+wordpress:
+    image: wordpress
+    links:
+      - wordpress_db:mysql
+    ports:
+      - "8080:80"
+#Tier - 2
+wordpress_db:
+ image: mariadb
+ environment:
+  MYSQL_ROOT_PASSWORD: edureka
+
+#Tier 3   
+phpmyadmin:
+  image: corbinu/docker-phpmyadmin
+  links:
+    - wordpress_db:mysql
+  ports: 
+    - 8181:80
+
+  environment:
+    MYSQL_USERNAME: root
+    MYSQL_ROOT_PASSWORD: edureka
