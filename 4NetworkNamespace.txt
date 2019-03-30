@@ -23,3 +23,6 @@ ln -s /proc/$pid/ns/net /var/run/netns/box
 cd /var/run
 ip netns
 ip netns exec box ip a 
+
+
+docker inspect --format '{{.NetworkSettings.IPAddress}}' ns
