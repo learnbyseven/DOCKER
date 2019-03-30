@@ -1,0 +1,8 @@
+FROM	ubuntu
+RUN 	apt-get update && apt-get -y install --no-install-recommends dnsutils nginx && apt-get clean && \
+        chmod -R g+rwx /var/cache/ /var/run /var/log/nginx && \
+	echo "WEB SERVER VERSION 2" > /var/www/html/index.html && \
+	sed -i 's/80 default_server/8080 default_server/' /etc/nginx/sites-enabled/default && \
+        sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
+EXPOSE	8080
+CMD	/usr/sbin/nginx  -g "daemon off;"
