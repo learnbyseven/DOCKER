@@ -1,0 +1,58 @@
+# Managing Persistent data using Docker Storage
+## Downsides of storing data within the writable layer of a container or in container :
+
+- Data won’t persist when that container is no longer running or removed.
+- Container’s writable layer is tightly coupled to the host machine where the container is running. 
+- Writing into a container’s writable layer requires a storage driver to manage the filesystem. The storage driver provides
+  union filesystem, using the Linux kernel. This extra abstraction reduces performance as compared to using data volumes
+  which write directly to the host filesystem.
+
+### Docker offers three different ways to mount data into a container from the Docker host: 
+1. Volumes
+   - Create and manage by Docker CLI/API
+   - Isolated from core functionality of HOST
+   - Best choice for persistent data
+   - Use Docker host file system
+   - Default location : /var/lib/docker/volumes/
+   - Mountable to multiple containers concurrently and safely
+   - Volume driver supportable , Which makes them to store data remotely or on cloud
+
+2. Bind mounts 
+   - Use Docker hosts file system
+   - Location can be anywhere
+   - Can be modified by Non Docker process
+   - Performant
+   - Security downside
+   - Unmanageable by Docker
+   - Mount points created automatically if NA
+   
+3. Tmpfs volume
+   - Use to store non persistent data or state
+   - Store in memory
+   - "-v" flag not includes Tmpfs volumes
+   - Can be mounted by "--mount" flag 
+   
+## Use Cases
+
+#### Volumes
+- Sharing data among multiple running containers
+- Store container’s data on a remote host or a cloud provider, rather than locally
+- Able to back up, restore, or migrate data from one Docker host to another
+
+#### Bind mounts 
+- Sharing configuration files from the host machine to containers and vice versa
+- Sharing source code or build artifacts between a development environment on the Docker host
+            
+#### TMPFS
+- Mounting secret data
+
+# Practicals 
+```
+$ sudo docker volume create my-vol
+$ sudo docker volume inspect my-vol
+$ sudo docker run -d -p 8080:8080 --name voltest --mount source=my-vol,target=/var/www/html web:v1 
+or
+$ sudo docker run -d -p 8080:8080 --name voltest -v my-vol:/var/www/html web:v1
+For Services
+$ docker service create -d --replicas=2 --name voltest-service --mount source=my-vol,target=/var/www/html/ web:v1
+$ sudo docker volume rm my-vol
