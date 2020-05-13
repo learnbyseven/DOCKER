@@ -1,0 +1,51 @@
+ Multi-host-overlay
+## Setting up vanilla multi host over lay network in Docker 
+
+### Scenario
+Container name hac1 on Host-A can communicate container name hbc1 running on Host-B and are part of same network. 
+
+### Prerequisite
+ - Docker-Machine
+ - Key Value store 
+
+#### Step 1 
+     Setting up Key value store, This example uses Consul KV store.
+```
+$ sudo docker-machine create -d virtualbox consulkv
+$ sudo docker-machine ssh consulkv
+$ sudo docker run -d --name consul -p 8500:8500 -h consul consul agent -server -bootstrap -client "0.0.0.0"
+$ docker ps
+$ exit
+```
+#### Step 2
+     Setting up two Docker-host, Host-A & Host-B
+```
+$ sudo docker-machine create -d virtualbox --engine-opt="cluster-store=consul://$(docker-machine ip consulkv):8500" --engine-opt="cluster-advertise=eth1:2376" hosta
+$ sudo sudo docker-machine create -d virtualbox --engine-opt="cluster-store=consul://$(docker-machine ip consulkv):8500" --engine-opt="cluster-advertise=eth1:2376" hostb
+$ exit
+```
+#### Step 3
+     Setup Overlay network name "mynet" on "Host-A"
+```
+$ sudo docker-machine ssh hosta
+$ sudo docker network create -d overlay --subnet=20.0.9.0/24 mynet
+$ exit
+```
+#### Step 4
+     Create container name hac1 on Host-A & hbc1 on Host-B with network "mynet" using docker image busybox.
+HOSTA
+```
+$ sudo docker-machine ssh hosta
+$ sudo docker run -itd --net=mynet -h hac1 --name=hac1 busybox
+```
+HOSTB
+```
+$ sudo docker-machine ssh hostb
+$ sudo docker run -itd --net=mynet -h hbc1 --name=hbc1 busybox
+```
+     
+#### Step 5 
+     Verify connectivity in between containers using ping utility.
+ - Login on both containers (hac1, hbc1) , Find ip addresses and ping each other by IPs. 
+
+
