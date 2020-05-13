@@ -1,0 +1,94 @@
+# Logging
+## Container Logs
+
+The docker logs command shows information logged by a running container. The docker service logs command shows information logged by all containers participating in a service. 
+By default, docker logs or docker service logs shows the command’s output just as it would appear if you ran the command interactively in a terminal. 
+
+- Logging driver sends logs to a file, an external host, a database, or another logging back-end.
+- Application runs a non-interactive process such as a web server or a database, that application may send its output to log files instead   of STDOUT and STDERR.
+## Illustration to configure logging in Docker environment using logging driver mechanism 
+By default, JSON is a default logging driver in Docker 
+```
+$ sudo docker info |grep 'Logging Driver'
+```
+OUTPUT "Logging Driver: json-file"
+#### The following example explicitly sets the default logging driver (JSON):
+#### file /etc/docker/daemon.json
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "labels": "production_container",
+    "max-size": "10m"
+   }
+}
+```
+RUN TIME 
+```
+$ sudo docker run -itd --log-driver=json-file --log-opt labels=production,maxsize=10m --name=json_container busybox
+$ sudo docker inspect -f '{{.HostConfig.LogConfig.Type}}' json_container
+$ sudo docker inspect -f '{{.HostConfig.LogConfig.Config}}' json_container
+$ sudo docker inspect json_container | grep LogPath
+```
+#### The following example explicitly sets the default logging driver (SYSLOG):
+#### file /etc/docker/daemon.json
+```
+{
+  "log-driver": "syslog",
+  "log-opts": {
+    "labels": "production_container",
+    "syslog-address": "udp://127.0.0.1:514"
+   }
+}
+```
+RUN TIME 
+```
+$ DONT RUN : sudo docker run -itd --log-driver=syslog --log-opt syslog-address=udp://1.2.3.4:1111 --name=syslog_container busybox
+$ sudo docker run -itd --name=syslog_container
+$ sudo docker inspect -f '{{.HostConfig.LogConfig.Type}}' syslog_container
+$ sudo docker inspect -f '{{.HostConfig.LogConfig.Config}}' syslog_container
+```
+### SYSLOG IN DETAIL
+The syslog logging driver routes logs to a syslog server. The syslog protocol uses a raw string as the log message and supports a limited set of metadata. The syslog message must be formatted in a specific way to be valid. From a valid message, the receiver can extract the following information:
+
+- priority: the logging level, such as debug, warning, error, info.
+- timestamp: when the event occurred.
+- hostname: where the event happened.
+- facility: which subsystem logged the message, such as mail or kernel.
+- process name and process ID (PID): The name and ID of the process that generated the log.
+
+### Docker host
+```
+$ sudo vim.tiny /etc/rsyslog.conf
+```
+Uncomment below lines
+# provides UDP syslog reception
+module(load="imudp")
+input(type="imudp" port="514")
+```
+$ sudo systemctl restart rsyslog.service
+```
+Verify port is enabled and listening
+```
+$ sudo netstat -antup
+```
+It shows 514 in list and listening
+Run Container
+```
+$ sudo docker run -itd --log-driver=syslog --log-opt syslog-address=udp://127.0.0.1:514 --name=syslog_container busybox
+```
+Open a duplicate shell  
+RUN
+```
+$ sudo tail -f /var/log/syslog
+```
+Back on original shell
+```
+$ sudo docker attach syslog_container
+$ sudo touch one two
+```
+On duplicate shell you can see logs of syslog_container
+
+### Exercise Logging : Replicate same steps for a json-file driver enabled container and verify log output
+
+
