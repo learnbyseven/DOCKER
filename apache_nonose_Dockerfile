@@ -1,0 +1,18 @@
+## DEMO WEBSERVER NON OSE ROOT IMAGE  
+# Base operating system image based on centos 7 
+FROM	centos:7
+
+# Package installation and configuration changes
+RUN 	yum install -y httpd && yum clean all -y && \
+    	sed -i 's/Listen 80/Listen 8081/' /etc/httpd/conf/httpd.conf && \
+        echo "non-ose web server" > /var/www/html/index.html 
+
+# Listen on below port
+EXPOSE 8081
+
+
+# Always execute entry point
+ENTRYPOINT	["/usr/sbin/httpd"]
+
+# Run process in foregroud as a parameter
+CMD		["-DFOREGROUND"] 
