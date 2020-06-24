@@ -35,3 +35,7 @@ echo $_SERVER["REMOTE_ADDR"];
 </h2>
 </body>
 </html>
+
+
+FOR IP ONLY use index.php with only below contents:
+echo gethostname();
